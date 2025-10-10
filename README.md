@@ -1,5 +1,5 @@
 <div align="center">
-  <img alt="ollama" width="350" src="https://github.com/lorenzbarna/artscii/cover.png">
+  <img alt="cover image" width="350" src="cover.png">
 </div>
 
 

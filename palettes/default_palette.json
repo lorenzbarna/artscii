@@ -1,0 +1,20 @@
+{
+"darkmode": false,
+"range_to": 255,
+"palette": [
+    {"letter": "@", "under_val": 15},
+    {"letter": "#", "under_val": 30},
+    {"letter": "8", "under_val": 45},
+    {"letter": "&", "under_val": 60},
+    {"letter": "o", "under_val": 75},
+    {"letter": ":", "under_val": 90},
+    {"letter": "*", "under_val": 105},
+    {"letter": "+", "under_val": 120},
+    {"letter": "=", "under_val": 135},
+    {"letter": "-", "under_val": 150},
+    {"letter": "~", "under_val": 165},
+    {"letter": ".", "under_val": 180},
+    {"letter": "`", "under_val": 210},
+    {"letter": " ", "under_val": 255}
+]
+}

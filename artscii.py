@@ -2,16 +2,47 @@ from pathlib import Path
 import cv2
 import requests
 import numpy as np
+import json
 
-default_scale = 0.1
-default_console_print = True
-default_res_path = False
+default_palette = """
+                {
+                "darkmode": false,
+                "range_to": 255,
+                "palette": [
+                    {"letter": "@", "under_val": 15},
+                    {"letter": "#", "under_val": 30},
+                    {"letter": "8", "under_val": 45},
+                    {"letter": "&", "under_val": 60},
+                    {"letter": "o", "under_val": 75},
+                    {"letter": ":", "under_val": 90},
+                    {"letter": "*", "under_val": 105},
+                    {"letter": "+", "under_val": 120},
+                    {"letter": "=", "under_val": 135},
+                    {"letter": "-", "under_val": 150},
+                    {"letter": "~", "under_val": 165},
+                    {"letter": ".", "under_val": 180},
+                    {"letter": "`", "under_val": 210},
+                    {"letter": " ", "under_val": 255}
+                ]
+                }
+                """
 
-def convert(image, scale, font_ratio,  console_print, res_path):
+def convert(image, palette: dict = json.loads(default_palette), scale: float = 0.1, font_ratio: float = 0.45, res_path: str = False, darkmode: bool = False):
+
+    palette_dict = {}
+    last_val = 0
+    for i in palette["palette"]:
+        letter = i["letter"]
+        for val in range(last_val, i["under_val"]):
+            palette_dict[val] = letter
+        last_val = i["under_val"]
+
 
     original_size = image.shape[:2]
+
     hor_block_size = int(1/scale)
     ver_block_size = int(hor_block_size*(1/font_ratio))
+
     hsv_img = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
 
     result = []
@@ -31,40 +62,33 @@ def convert(image, scale, font_ratio,  console_print, res_path):
 
             brightness = sum(val)/len(val)
 
-            if brightness <= 50:
-                res_line.append(".")
-            elif brightness <= 100:
-                res_line.append("-")
-            elif brightness <= 150:
-                res_line.append("*")
-            elif brightness <= 200:
-                res_line.append("O")
-            else:
-                res_line.append("W")
+            if (not palette["darkmode"] and darkmode) or (palette["darkmode"] and not darkmode):
+                brightness = 255 - brightness
+
+            res_line.append(palette_dict[int(brightness)])
 
         result.append("".join(res_line))
-        if console_print:
-            print("".join(res_line))
 
     if res_path:
         with open(res_path, "w") as f:
             for line in result:
                 f.write(line + "\n")
 
+    return result
     
 
 
-def convert_from_path(img_path: str, scale: float = default_scale, font_ratio: float = 0.5, console_print: bool = default_console_print, res_path: str = default_res_path):
-    
+def image_from_path(img_path: str):
+                    
     p = Path(__file__).parent / img_path
     image = cv2.imread(img_path)
     
     if image is None:
         raise FileNotFoundError(f"Could not read image at {p}")
     
-    return convert(image, scale, font_ratio, console_print, res_path)
+    return image
 
-def convert_from_web(url: str, scale: float = default_scale, font_ratio: float = 0.6, console_print: bool = default_console_print, res_path: str = default_res_path):
+def image_from_url(url: str):
     
     response = requests.get(url)
     response.raise_for_status()
@@ -76,9 +100,20 @@ def convert_from_web(url: str, scale: float = default_scale, font_ratio: float =
     if image is None:
         raise ValueError("Could not decode image from URL")
     
-    return convert(image, scale, font_ratio, console_print, res_path)
+    return image
 
+def print_to_console(result):
+    for i in result:
+        print(i)
 
+def load_palette(path: str):
+    
+    p = Path(__file__).parent / path
+    
+    with open(p, 'r') as f:
+        data = json.load(f)
 
-
-convert_from_path("test1.png", res_path="test.txt", scale=0.5) #  scale=0.5)
+    if data is None:
+        raise ImportError(f"Something went wrong importing the palette from {p}")
+    
+    return data

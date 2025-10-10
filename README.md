@@ -1,5 +1,5 @@
 <div align="center">
-  <img alt="cover image" width="350" src="cover.png">
+  <img alt="cover image" width="350" src="assets/cover.png">
 </div>
 
 

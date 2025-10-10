@@ -43,3 +43,4 @@ Reference [test.py](test.py) for some example usage.
 - [ ] Add colors
 - [ ] Creation of palettes for different fonts
 - [ ] Flask Web interface?
+- [ ] Live cam feed to ASCII (maybe as virtual web cam)

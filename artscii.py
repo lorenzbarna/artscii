@@ -7,26 +7,22 @@ default_scale = 0.1
 default_console_print = True
 default_res_path = False
 
-def convert(image, scale, console_print, res_path):
-    
-    #image = image[0:10,0:10]
-
+def convert(image, scale, font_ratio,  console_print, res_path):
 
     original_size = image.shape[:2]
-    block_size = int(1/scale)
+    hor_block_size = int(1/scale)
+    ver_block_size = int(hor_block_size*(1/font_ratio))
     hsv_img = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-
-    print("org size", original_size)
 
     result = []
 
-    for h in range(original_size[0]-block_size+1)[::block_size]:
+    for l in range(original_size[0]-ver_block_size+1)[::ver_block_size]:
 
         res_line = []
         
-        for l in range(original_size[1]-block_size+1)[::block_size]:
+        for p in range(original_size[1]-hor_block_size+1)[::hor_block_size]:
             
-            region = image[h:h+block_size, l:l+block_size]
+            region = hsv_img[l:l+ver_block_size, p:p+hor_block_size]
 
             val = []
             for line in region:
@@ -58,7 +54,7 @@ def convert(image, scale, console_print, res_path):
     
 
 
-def convert_from_path(img_path: str, scale: float = default_scale, console_print: bool = default_console_print, res_path: str = default_res_path):
+def convert_from_path(img_path: str, scale: float = default_scale, font_ratio: float = 0.5, console_print: bool = default_console_print, res_path: str = default_res_path):
     
     p = Path(__file__).parent / img_path
     image = cv2.imread(img_path)
@@ -66,9 +62,9 @@ def convert_from_path(img_path: str, scale: float = default_scale, console_print
     if image is None:
         raise FileNotFoundError(f"Could not read image at {p}")
     
-    return convert(image, scale, console_print, res_path)
+    return convert(image, scale, font_ratio, console_print, res_path)
 
-def convert_from_web(url: str, scale: float = default_scale, console_print: bool = default_console_print, res_path: str = default_res_path):
+def convert_from_web(url: str, scale: float = default_scale, font_ratio: float = 0.6, console_print: bool = default_console_print, res_path: str = default_res_path):
     
     response = requests.get(url)
     response.raise_for_status()
@@ -80,9 +76,9 @@ def convert_from_web(url: str, scale: float = default_scale, console_print: bool
     if image is None:
         raise ValueError("Could not decode image from URL")
     
-    return convert(image, scale, console_print, res_path)
+    return convert(image, scale, font_ratio, console_print, res_path)
 
 
 
 
-convert_from_path("test1.png", res_path="test.txt") #  scale=0.5)
+convert_from_path("test1.png", res_path="test.txt", scale=0.5) #  scale=0.5)

@@ -3,7 +3,7 @@ import artscii
 # Print the ASCII Art to the console using print_to_console
 print("Super simple:")
 artscii.print_to_console(artscii.convert(artscii.image_from_path("test.png")))
-                         
+
 # Save it to a file by specifying that location
 artscii.convert(artscii.image_from_path("test.png"), res_path="test.txt")
 

@@ -36,6 +36,7 @@ def convert(image, palette: dict = json.loads(default_palette), scale: float = 0
         for val in range(last_val, i["under_val"]):
             palette_dict[val] = letter
         last_val = i["under_val"]
+    palette_dict[palette["range_to"]] = palette["palette"][-1]["letter"]
 
 
     original_size = image.shape[:2]
